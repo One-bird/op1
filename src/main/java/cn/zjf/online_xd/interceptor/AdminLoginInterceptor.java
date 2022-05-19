@@ -16,8 +16,9 @@ import java.io.PrintWriter;
  * @author OneBird
  * @date 2022/3/19 19:36
  **/
-public class LoginInterceptor implements HandlerInterceptor {
+public class AdminLoginInterceptor implements HandlerInterceptor {
     /**
+     * 管理员登录拦截器
      * 进入到controller之前的方法
      * @param request
      * @param response
@@ -29,7 +30,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         try {
-
             String accesToken = request.getHeader("token");
             if (accesToken == null) {
                 accesToken = request.getParameter("token");
@@ -46,15 +46,13 @@ public class LoginInterceptor implements HandlerInterceptor {
                 Integer id = (Integer) claims.get("id");
                 String name = (String) claims.get("name");
 
-                request.setAttribute("user_id", id);
+                request.setAttribute("user", id);
                 request.setAttribute("name", name);
                 return true;
             }
 
         }catch (Exception e){}
-
         sendJsonMessage(response, JsonData.buildError("登录过期，重新登录"));
-
         return false;
     }
 

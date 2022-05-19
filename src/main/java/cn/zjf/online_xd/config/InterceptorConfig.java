@@ -1,5 +1,6 @@
 package cn.zjf.online_xd.config;
 
+import cn.zjf.online_xd.interceptor.AdminLoginInterceptor;
 import cn.zjf.online_xd.interceptor.CorsInterceptor;
 import cn.zjf.online_xd.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new CorsInterceptor();
     }
 
+    @Bean
+    AdminLoginInterceptor adminLoginInterceptor(){
+        return new AdminLoginInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         /**
@@ -35,10 +41,17 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(corsInterceptor()).addPathPatterns("/**");
 
         /**
-         * 拦截尾未登录用户
+         * 拦截未登录用户
          */
         registry.addInterceptor(loginInterceptor()).addPathPatterns("/api/v1/pri/*/*/**")
                 .excludePathPatterns("/api/v1/pri/user/login","/api/v1/pri/user/register");
+        WebMvcConfigurer.super.addInterceptors(registry);
+
+        /**
+         * 拦截管理员
+         */
+        registry.addInterceptor(adminLoginInterceptor()).addPathPatterns("/admin/v1/pri/*/*/**")
+                .excludePathPatterns("/admin/v1/pri/user/login");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }

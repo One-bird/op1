@@ -1,5 +1,6 @@
 package cn.zjf.online_xd.utils;
 
+import cn.zjf.online_xd.model.entity.Admin;
 import cn.zjf.online_xd.model.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -63,6 +64,18 @@ public class JWTUtils {
         return token;
     }
 
+    /**
+     * 管理员生成token
+     */
+    public static String adminJsonWebToken(Admin admin){
+        String token = Jwts.builder().setSubject(SUBJECT)
+                .claim("id", admin.getId())
+                .claim("name", admin.getName())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE))
+                .signWith(SignatureAlgorithm.HS256, SECRET).compact();
+        return token;
+    }
 
     /**
      * 校验token的方法
@@ -71,7 +84,6 @@ public class JWTUtils {
      * @return
      */
     public static Claims checkJWT(String token) {
-
         try {
 
             final Claims claims = Jwts.parser().setSigningKey(SECRET)
